@@ -6,7 +6,7 @@ from sdkms.v1.models.cipher_mode import CipherMode
 from sdkms.v1.models.object_type import ObjectType
 from sdkms.v1.models.sobject_descriptor import SobjectDescriptor
 
-api_key = ""
+api_key = "YjViMzdhNTYtYmNhMC00Yjk2LWFhZTgtMGEzM2JmYTFjMDQyOndXbVZ4cHRodTNxSGZwMWpEVl9MTjFSZjJMUlhCTm5QM1NWZXZ0N1hxajJTb3RBLVJoWEtsZWhJU1pVWjNmaS1idVdoaU1mcThPd1hIdVBEYVc0Tm1R"
 
 def login():
     config = sdkms.v1.Configuration()
@@ -69,8 +69,8 @@ def rotate_key(name):
     api_instance = sdkms.v1.SecurityObjectsApi(api_client=client)
     request = sdkms.v1.SobjectRequest(name=name,key_size=128,obj_type=sdkms.v1.ObjectType.AES)
     try:                
-        key_uid = api_instance.rotate_security_object(request).kid
-        return key_uid
+        key = api_instance.rotate_security_object(request)
+        return key
     except sdkms.v1.configuration.ApiException as e:
         print("Exception when calling SecurityObjectsApi->generate_security_object: %s\n" % e)
         return None
@@ -82,15 +82,16 @@ name = key.name
 encryption = encrypt(name,"Hello World")
 iv = encryption.iv
 
-decryption = decrypt(name,encryption.cipher,iv)
-
-print(decryption.plain.decode())
-
-rotate_key(name)
-
-encryption = encrypt(name,"Hello World Again")
-iv = encryption.iv
+print(encryption.cipher)
 
 decryption = decrypt(name,encryption.cipher,iv)
 
 print(decryption.plain.decode())
+
+rotation = rotate_key(name)
+
+print(rotation)
+
+decryption = decrypt(rotation.name,encryption.cipher,iv)
+
+"""print(decryption.plain.decode())"""
